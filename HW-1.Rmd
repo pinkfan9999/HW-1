@@ -115,11 +115,24 @@ For example, Southwest Airlines Flight 60 to Dallas consists of a single flight
 path, but since it flew 299 times in 2013, it would be counted as 299 flights.
 
 ```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=6}
+southwest_flights <- flights %>% filter(carrier=="WN") %>% select(carrier,flight, dest, time)
+
+southwest_flights <- left_join(southwest_flights,airports, by=c("dest"="iata"))
+southwest_flights <- southwest_flights %>% filter(!is.na(state))
+
+southwest_flightpath <- southwest_flights %>% group_by(state) %>% tally()
+southwest_flightpath <- southwest_flightpath %>% rename(flight_paths = n)
+ggplot(southwest_flightpath, aes(x=state, y=flight_paths)) +geom_bar(stat="identity") + ggtitle("Southwest Flight Paths")
+
+southwest_flight_total <- southwest_flights %>% group_by(state) %>% tally(time)
+southwest_flight_total <- southwest_flight_total %>% rename(flights=n)
+ggplot(southwest_flight_total, aes(x=state, y=flights)) +geom_bar(stat="identity") +ggtitle("Southwest Flights")
 
 ```
 
+According to the data, the most flight paths, for Southwest Airlines, were to Texas, Florida, Louisiana, California, and Okhlahoma. 
 
-
+However, the most flights were to Texas, California, Florida, Nevada, and Illinois.
 
 
 ## Question 4:
