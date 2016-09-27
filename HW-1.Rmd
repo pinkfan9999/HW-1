@@ -39,8 +39,8 @@ Please indicate
 
 * Who you collaborated with: Nobody
 * Roughly how much time you spent on this HW so far: 5 hours
-* The URL of the RPubs published URL [here](https://www.nhl.com/).
-* What gave you the most trouble: Trying to get rid of the duplicate planes in question number 2, and tying to isolate the July flights in question four.
+* The URL of the RPubs published URL [here](http://rpubs.com/pinkfan9999/Pre-HW1).
+* What gave you the most trouble: Trying to get rid of the duplicate planes in question number 2, and trying to isolate the July flights in question four.
 * Any comments you have:
 
 
