@@ -61,22 +61,21 @@ minutes tend to occur.
 ```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=6}
 #X-axis should be either date, or hour. Must calculate delays greater than 30 min.
 
-flight_delays <- flights %>% filter(!is.na(dep_delay)) %>% select(dep,dep_delay)
+flight_delays <- flights %>% filter(!is.na(dep_delay)) %>% select(date,dep_delay)
 
 # Calculate proportion
-big_delays <- flight_delays %>% group_by(dep) %>% tally(dep_delay > 30)
-total_delays <- flight_delays %>% group_by(dep) %>% tally()
-delays_by_hour <- inner_join(big_delays,total_delays, by="dep")
-delays_by_hour <-rename(delays_by_hour, big_delays=n.x)
-delays_by_hour <-rename(delays_by_hour, total_flight=n.y)
-delays_by_hour <- mutate(delays_by_hour, prop = big_delays/total_flight)
+big_delays <- flight_delays %>% group_by(date) %>% tally(dep_delay > 30)
+total_delays <- flight_delays %>% group_by(date) %>% tally()
+delays_by_date <- inner_join(big_delays,total_delays, by="date") %>% 
+  rename(big_delays=n.x) %>% 
+  rename(total_flight=n.y) %>% 
+  mutate(prop = big_delays/total_flight)
 
 #Graph everything
-ggplot(data=delays_by_hour, aes(x=dep, y=prop)) +geom_bar(stat="identity") + geom_smooth(se=FALSE)
+ggplot(data=delays_by_date, aes(x=date, y=prop)) +geom_bar(stat="identity") + geom_smooth(se=FALSE) + xlab("Date") + ylab("Proportion of Flights Delayed > 30 minutes")
 ```
 
-As time of departure increases, the proportion of flights with major delays (greater than 30 minutes) increases as well. For the purposes of this data, a "day" starts at around 6AM, and ends at about 2AM.
-
+The change in proportion of flights delayed more than 30 minutes seems to be fairly cyclical. From January 2011 to July 2011, the proportion increases. After July 2011, the proportion decreases until October 2011. The proportion then begins to increase onwards. 
 
 
 ## Question 2:
