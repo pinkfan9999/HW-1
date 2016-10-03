@@ -117,16 +117,22 @@ path, but since it flew 299 times in 2013, it would be counted as 299 flights.
 ```{r, echo=FALSE, message=FALSE, fig.width=12, fig.height=6}
 southwest_flights <- flights %>% filter(carrier=="WN") %>% select(carrier,flight, dest, time)
 
-southwest_flights <- left_join(southwest_flights,airports, by=c("dest"="iata"))
-southwest_flights <- southwest_flights %>% filter(!is.na(state))
+southwest_flights <- left_join(southwest_flights,airports, by=c("dest"="iata"))%>% 
+  filter(!is.na(state))
 
-southwest_flightpath <- southwest_flights %>% group_by(state) %>% tally()
-southwest_flightpath <- southwest_flightpath %>% rename(flight_paths = n)
-ggplot(southwest_flightpath, aes(x=state, y=flight_paths)) +geom_bar(stat="identity") + ggtitle("Southwest Flight Paths")
+southwest_flightpath <- southwest_flights %>% 
+  group_by(flight) %>% 
+  mutate(duplicate_flight = duplicated(dest)) %>% 
+  filter(duplicate_flight==FALSE) %>% 
+  group_by(state) %>% 
+  tally() %>% 
+  rename(flight_paths = n)
+ggplot(southwest_flightpath, aes(x=state, y=flight_paths)) +geom_bar(stat="identity") + ggtitle("Southwest Flight Paths") +xlab("State") + ylab("Number of Flight Paths")
 
-southwest_flight_total <- southwest_flights %>% group_by(state) %>% tally(time)
-southwest_flight_total <- southwest_flight_total %>% rename(flights=n)
-ggplot(southwest_flight_total, aes(x=state, y=flights)) +geom_bar(stat="identity") +ggtitle("Southwest Flights")
+southwest_flight_total <- southwest_flights %>% group_by(state) %>% 
+  tally(time)%>% 
+  rename(flights=n)
+ggplot(southwest_flight_total, aes(x=state, y=flights)) +geom_bar(stat="identity") +ggtitle("Southwest Flights") +xlab("State") + ylab("Number of Flights")
 
 ```
 
@@ -151,10 +157,10 @@ carrier_flights <-July_flights %>% filter(!is.na(region)) %>%  group_by(carrier,
 
 total <- July_flights %>% filter(!is.na(region)) %>% group_by(carrier) %>% tally()
 
-carrier_flights <- inner_join(carrier_flights, total, by="carrier")
-carrier_flights <- carrier_flights %>% rename(total_flights_by_region=n.x) 
-carrier_flights <- carrier_flights %>% rename(total_carrier_flights=n.y)
-carrier_flights <- carrier_flights %>% mutate(proportion = total_flights_by_region/total_carrier_flights)
+carrier_flights <- inner_join(carrier_flights, total, by="carrier") %>% 
+  rename(total_flights_by_region=n.x) %>% 
+  rename(total_carrier_flights=n.y)%>% 
+  mutate(proportion = total_flights_by_region/total_carrier_flights)
 
 ggplot(data= carrier_flights, aes(x=region, y=proportion)) + geom_bar(stat="identity") + facet_wrap(~carrier)
 
