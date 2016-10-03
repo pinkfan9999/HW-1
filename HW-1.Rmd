@@ -88,21 +88,21 @@ they tend to have more room.  Which airlines should these people favor?
 planes <- planes %>% filter(!is.na(year))
 
 # Adjust flight data in a new data table
-flight_data <- flights %>% group_by(plane) %>% select(plane,carrier)
-flight_data <- flight_data %>% mutate(duplicate = duplicated(plane))
+flight_data <- flights %>% group_by(plane) %>% 
+  select(plane,carrier) %>%
+  mutate(duplicate = duplicated(plane)) %>% 
 # Get rid of Duplicate planes
-flight_data <- flight_data %>% filter(duplicate =="FALSE")
+  filter(duplicate =="FALSE")
 
-old_planes <- left_join(planes, flight_data, by= "plane")
-old_planes <- old_planes %>% group_by(plane) %>% select(plane,carrier,year)
-old_planes <- old_planes %>% mutate(plane_age = 2016-year)
+old_planes <- left_join(planes, flight_data, by= "plane")%>% 
+  group_by(plane) %>% 
+  select(plane,carrier,year) %>% 
+  mutate(plane_age = 2016-year)
 
-fleet_age <- old_planes %>% group_by(carrier) %>% summarise(average_age = mean(plane_age))
-
-ggplot(data=fleet_age, aes(x=carrier, y=average_age)) + geom_bar(stat="identity")
+ggplot(data=old_planes, aes(x=carrier, y=plane_age)) + geom_boxplot()+ xlab("Airline Carrier") +ylab("Plane Age (Years)") 
 ```
 
-People wanting to fly on old planes should fly with MQ (Envoy Air) or AA (American Airlines). On a side note, Envoy Air is one of American Airline's regional airlines operating under American Eagle.
+People wanting to fly on old planes should fly with MQ (Envoy Air) or AA (American Airlines), because these airlines tend to have a good distribution of older planes. On a side note, Envoy Air is one of American Airline's regional airlines operating under American Eagle.
 
 
 
